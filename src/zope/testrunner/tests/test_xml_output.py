@@ -130,7 +130,10 @@ class TextXMLOutputWithErrors(Base):
         self._run_tests()
 
         self.assertTrue(self.reports_folder.exists())
-        self.assertEqual(len([x for x in self.reports_folder.iterdir()]), 106)
+        # Python 3.15+ includes an additional unittest.case._SubTest.xml file
+        # containing subtest information
+        expected_count = 107 if sys.version_info >= (3, 15) else 106
+        self.assertEqual(len([x for x in self.reports_folder.iterdir()]), expected_count)
 
     def test_xml_report_with_errors_details(self):
         sys.argv = 'test --tests-pattern ^sampletests(f|_e|_f)?$ '.split()
