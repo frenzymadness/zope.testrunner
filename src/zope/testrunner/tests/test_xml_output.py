@@ -24,6 +24,8 @@ from pathlib import Path
 from zope import testrunner
 
 
+PY314_OR_OLDER = sys.version_info < (3, 15)
+
 class Base(unittest.TestCase):
 
     def tearDown(self):
@@ -130,9 +132,9 @@ class TextXMLOutputWithErrors(Base):
         self._run_tests()
 
         self.assertTrue(self.reports_folder.exists())
-        # Python 3.15+ includes an additional unittest.case._SubTest.xml file
+        # Python < 3.15 does not include a unittest.case._SubTest.xml file
         # containing subtest information
-        expected_count = 107 if sys.version_info >= (3, 15) else 106
+        expected_count = 106 if PY314_OR_OLDER else 107
         self.assertEqual(
             len([x for x in self.reports_folder.iterdir()]), expected_count)
 
